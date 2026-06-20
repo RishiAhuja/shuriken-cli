@@ -1,6 +1,6 @@
 {
   "name": "create-shuriken",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Scaffold a new Shuriken Next.js project with a sharp TUI",
   "type": "module",
   "bin": {

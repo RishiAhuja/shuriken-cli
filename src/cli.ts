@@ -47,11 +47,13 @@ export async function runCli(args: CliArgs): Promise<void> {
 
     if (config.runInstall || config.initGit) {
       await runPostInstall(config, (message) => {
+        spinner.stop();
         spinner.start(message);
       });
-      spinner.stop("Post-install complete");
     }
 
+    // Clear spinner before note/outro — avoids a stuck animation after success
+    spinner.stop();
     printNextSteps(config);
   } catch (error) {
     spinner.stop(pc.red("Failed"));

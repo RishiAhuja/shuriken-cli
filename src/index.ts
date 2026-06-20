@@ -90,7 +90,11 @@ Options:
 `);
 }
 
-runCli(parseArgs(process.argv.slice(2))).catch((error) => {
-  console.error(error);
-  process.exit(1);
-});
+runCli(parseArgs(process.argv.slice(2)))
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((error) => {
+    console.error(error);
+    process.exit(1);
+  });
