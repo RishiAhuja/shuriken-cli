@@ -1,0 +1,25 @@
+# Git and dependencies
+.git/
+node_modules/
+.pnpm-store/
+
+# Build artifacts
+.next/
+dist/
+packages/database/generated/
+*.tsbuildinfo
+mprocs.log
+
+# Environment and secrets (generated per project)
+.env
+.env.*
+!.env.example
+.age-key.txt
+.sops.yaml
+secrets/
+
+# Local overrides
+mprocs.local.yaml
+
+# Template build output
+dist/template/
