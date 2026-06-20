@@ -1,0 +1,56 @@
+name: Sync Template
+
+on:
+  workflow_dispatch:
+    inputs:
+      shuriken_tag:
+        description: Shuriken release tag (e.g. v1.0.0)
+        required: true
+        default: v1.0.0
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download template artifact
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release download "${{ inputs.shuriken_tag }}" \
+            --repo RishiAhuja/shuriken \
+            --pattern "shuriken-template.tar.gz" \
+            --dir /tmp
+
+      - name: Extract template
+        run: |
+          rm -rf template
+          mkdir -p template
+          tar -xzf /tmp/shuriken-template.tar.gz -C /tmp
+          cp -R /tmp/template/* template/
+
+      - name: Update template version
+        run: |
+          VERSION="${{ inputs.shuriken_tag }}"
+          VERSION="${VERSION#v}"
+          node -e "
+            const fs = require('fs');
+            const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+            pkg.templateVersion = '${VERSION}';
+            fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2) + '\n');
+          "
+
+      - name: Build CLI
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
