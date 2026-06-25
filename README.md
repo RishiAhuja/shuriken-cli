@@ -1,114 +1,118 @@
 # create-shuriken
 
-Scaffold a new [Shuriken](https://github.com/RishiAhuja/shuriken) project with a sharp terminal UI.
-
-## Usage
+Scaffold a production-ready [Shuriken](https://github.com/RishiAhuja/shuriken) project — split Next.js apps, auth, Prisma, and a clean UI — with an interactive terminal setup.
 
 ```bash
 npm create shuriken@latest
-# or
-npx create-shuriken my-app
+```
+
+## Quick start
+
+```bash
+npm create shuriken@latest my-app
+cd my-app
+pnpm docker:dev
+pnpm db:migrate && pnpm db:seed
+mprocs
+```
+
+- **Main app:** http://localhost:3000  
+- **Landing app:** http://localhost:3001
+
+## What you get
+
+Shuriken is a sharp, opinionated starter — not a library grab bag.
+
+| | |
+|---|---|
+| **Split architecture** | Marketing site (`landing/`) + product app (root), deploy independently |
+| **Auth** | Custom sessions, login/signup UI, rate-limited API routes |
+| **Database** | PostgreSQL + Prisma, migrations, admin seed |
+| **UI** | Tailwind CSS 4, shadcn/ui, design tokens |
+| **Tooling** | Biome, Husky, SOPS-ready secrets, Docker Compose |
+
+Learn more about the template itself in the [Shuriken repo](https://github.com/RishiAhuja/shuriken).
+
+## Requirements
+
+- **Node.js** 20+
+- **pnpm**
+- **Docker** (recommended for local Postgres + Redis)
+
+Optional, for encrypted secrets during setup:
+
+- [age](https://github.com/FiloSottile/age)
+- [sops](https://github.com/mozilla/sops)
+
+## Usage
+
+Interactive (recommended):
+
+```bash
+npm create shuriken@latest
 ```
 
 Non-interactive:
 
 ```bash
 npx create-shuriken my-app --yes
-npx create-shuriken my-app --yes --no-install   # skip pnpm install
 ```
 
-## Requirements
+Skip dependency install (faster, install manually later):
 
-- Node.js 20+
-- pnpm
-- Optional: [age](https://github.com/FiloSottile/age) and [sops](https://github.com/mozilla/sops) for encrypted secrets
+```bash
+npx create-shuriken my-app --yes --no-install
+```
 
 ## Options
 
-```
-create-shuriken [dir] [options]
+| Flag | Description |
+|------|-------------|
+| `--name <name>` | npm package / project name |
+| `--app-name <name>` | Display name in the UI |
+| `--main-port <port>` | Main app port (default: `3000`) |
+| `--landing-port <port>` | Landing app port (default: `3001`) |
+| `--github-repo <url>` | GitHub link on the landing page |
+| `--no-landing` | Skip the landing app |
+| `--no-docker` | Skip Docker Compose files |
+| `--no-husky` | Skip Husky pre-commit hooks |
+| `--no-git` | Skip `git init` |
+| `--no-install` | Skip `pnpm install` and Prisma generate |
+| `--sops` | Set up SOPS encrypted secrets |
+| `--force` | Scaffold into a non-empty directory |
+| `-y`, `--yes` | Use defaults, skip prompts |
 
-  --name <name>           npm package / project name
-  --app-name <name>       display name shown in UI
-  --main-port <port>      main app port (default: 3000)
-  --landing-port <port>   landing app port (default: 3001)
-  --github-repo <url>     GitHub link for landing page
-  --no-landing            skip landing app
-  --no-docker             skip Docker Compose files
-  --no-husky              skip Husky pre-commit hooks
-  --no-git                skip git init
-  --no-install            skip pnpm install
-  --sops                  enable SOPS secret setup
-  --force                 scaffold into non-empty directory
-  -y, --yes               use defaults, skip prompts
-```
-
-## Template version
-
-This package bundles Shuriken template version **1.0.0**. See `templateVersion` in `package.json`.
-
-## Development
+## After scaffolding
 
 ```bash
-pnpm install
-pnpm build
-node dist/index.js my-test-app --yes --no-install
+cd my-app
+
+# Start Postgres + Redis
+pnpm docker:dev
+
+# Run migrations and seed admin user
+pnpm db:migrate
+pnpm db:seed
+
+# Run everything (main app, landing, database)
+mprocs
 ```
 
-### Sync template from Shuriken repo
+Default admin credentials (if you kept the seed defaults):
 
-```bash
-cd ../shuriken && pnpm template:build
-rm -rf ../shuriken-cli/template && cp -R dist/template ../shuriken-cli/template
-cd ../shuriken-cli && pnpm build
-```
+- Email: `admin@example.com`
+- Password: `Admin@123`
 
-## Publish to npm
+## Contributing
 
-### One-time setup
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for local development, template sync, and release instructions.
 
-1. Create an account at [npmjs.com](https://www.npmjs.com/signup)
-2. Log in locally:
+## Links
 
-```bash
-npm login
-npm whoami   # should print your username
-```
-
-3. Create an **Automation** token at [npmjs.com/settings/~/tokens](https://www.npmjs.com/settings/~/tokens) for CI (optional)
-
-### Publish manually
-
-From the `shuriken-cli` directory:
-
-```bash
-pnpm build
-npm publish --access public
-```
-
-`prepublishOnly` runs `pnpm build` automatically if you skip the build step.
-
-Verify:
-
-```bash
-npm view create-shuriken
-npx create-shuriken@latest /tmp/test-app --yes --no-install
-```
-
-### Publish via GitHub Actions
-
-Add `NPM_TOKEN` (Automation token) to your repo secrets, then create a GitHub Release — the workflow in `.github/workflows/publish.yml` publishes automatically.
-
-### Releasing updates
-
-Bump version in `package.json`, sync template if needed, then:
-
-```bash
-npm version patch   # 1.0.0 → 1.0.1
-npm publish --access public
-git push && git push --tags
-```
+- [Shuriken template](https://github.com/RishiAhuja/shuriken)
+- [CLI source](https://github.com/RishiAhuja/shuriken-cli)
+- [Report an issue](https://github.com/RishiAhuja/shuriken-cli/issues)
 
 ## License
 
-MIT
+MIT © [Rishi Ahuja](https://github.com/RishiAhuja)
